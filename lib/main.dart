@@ -23,35 +23,71 @@ class CalculatorScreen extends StatefulWidget {
   _CalculatorScreenState createState() => _CalculatorScreenState();
 }
 
+//Stateful class that contains 3 methods and stateful widget that displays the calc screen, number buttons, and arithmetic buttons
 class _CalculatorScreenState extends State<CalculatorScreen> {
   String displayText = "";
 
+  //Updates the state of display by passing the string onPressed
   void updateDisplay(String number) {
-    setState(() { 
+    setState(() {
       displayText += number;
     });
   }
 
+  //Resets the display by making the displayText empty
   void clearDisplay() {
     setState(() {
       displayText = "";
     });
   }
 
-  
+  //Method that evaluates the expression in the display
+void evaluateExpression() {
+  try {
+    //changes the string inputs into operators
+    String input = displayText.replaceAll('×', '*').replaceAll('÷', '/');
 
+    // Uses regex to check if the input is divided by zero
+    if (RegExp(r'/\s*0+(?![\d.])').hasMatch(input)) {
+      setState(() {
+        displayText = "Error: Division by 0";
+      });
+      return;
+    }
+
+    //Parses the expression to stores it into exp
+    Parser p = Parser();
+    Expression exp = p.parse(input);
+    ContextModel cm = ContextModel();
+    double result = exp.evaluate(EvaluationType.REAL, cm);
+
+    //Changes the state of the result back to a string value and displays it  
+    setState(() {
+      displayText = result.toString();
+    });
+  } catch (e) {
+    setState(() {
+      displayText = "Error";
+    });
+  }
+}
+
+  //Widget that displays the calculator
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Simple Calculator'),
-      backgroundColor: Colors.brown,
+      //Top app bar that makes the color brown as well as the title.
+      appBar: AppBar( 
+        title: Text('Simple Calculator'),
+        backgroundColor: Colors.brown,
       ),
-      body: Padding(
-        padding: EdgeInsets.only(top: 50), // Space from the top
+
+      //Displays the screen given the dimensions as well as the allignment 
+      body: Padding( 
+        padding: EdgeInsets.only(top: 50), 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Display screen at the top with space
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(20),
@@ -63,13 +99,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               ),
               child: Text(
                 displayText,
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
                 textAlign: TextAlign.right,
               ),
             ),
-            SizedBox(height: 20), // Space between display and buttons
-
-            // Button row
+            
+            
+            
+            //First Row of buttons containing arithmemtics along with clear and calculate methods
+            SizedBox(height: 20), 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -82,7 +123,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   ),
                 ),
                 SizedBox(width: 10),
-                ElevatedButton( 
+                ElevatedButton(
                   onPressed: () => updateDisplay("+"),
                   child: Text("+", style: TextStyle(fontSize: 24)),
                   style: ElevatedButton.styleFrom(
@@ -101,7 +142,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed:  () => updateDisplay("="),
+                  onPressed: evaluateExpression,
                   child: const Text("=", style: TextStyle(fontSize: 24)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -110,9 +151,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ),
               ],
             ),
-                      SizedBox(height: 20), // Space between display and buttons
-
-            // Button row
+            
+            //Second row of buttons containing number 1-3 and * 
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -125,7 +166,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   ),
                 ),
                 SizedBox(width: 10),
-                ElevatedButton( 
+                ElevatedButton(
                   onPressed: () => updateDisplay("2"),
                   child: Text("2", style: TextStyle(fontSize: 24)),
                   style: ElevatedButton.styleFrom(
@@ -153,9 +194,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ),
               ],
             ),
-                      SizedBox(height: 20), // Space between display and buttons
-
-            // Button row
+            
+            //Third row containing numbers 4-6 along with /
+            SizedBox(height: 20), 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -168,7 +209,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   ),
                 ),
                 SizedBox(width: 10),
-                ElevatedButton( 
+                ElevatedButton(
                   onPressed: () => updateDisplay("5"),
                   child: Text("5", style: TextStyle(fontSize: 24)),
                   style: ElevatedButton.styleFrom(
@@ -196,9 +237,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ),
               ],
             ),
-                      SizedBox(height: 20), // Space between display and buttons
 
-            // Button row
+            //Fourth row containing numbers 7-0
+            SizedBox(height: 20), 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -211,7 +252,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   ),
                 ),
                 SizedBox(width: 10),
-                ElevatedButton( 
+                ElevatedButton(
                   onPressed: () => updateDisplay("8"),
                   child: Text("8", style: TextStyle(fontSize: 24)),
                   style: ElevatedButton.styleFrom(
